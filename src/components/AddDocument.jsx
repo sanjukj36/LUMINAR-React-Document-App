@@ -5,7 +5,7 @@ import DocumentDataService from "../services/document.services"
 import { ToastContainer,toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-function AddDocument() {
+function AddDocument () {
 
     const [documentName, setDocumentName] = useState("");
     const [documentContent, setDocumentContent] = useState("");

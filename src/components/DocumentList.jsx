@@ -38,9 +38,7 @@ function DocumentList() {
         setOpen(true);
     };
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+  
 
     const handleDelete = async (id) => {
         await DocumentDataService.deleteDocument(id);
@@ -52,15 +50,7 @@ function DocumentList() {
     //       navigate(`/quill/${id}`)
     // }
 
-    const handleUpdate = async () => {
-        const updatedDocument = {
-            documentContent: documentContent
-        };
-        await DocumentDataService.updateDocument(documentId, updatedDocument);
-        handleClose();
-        getDocuments();
-    };
-
+   
     return (
         <div className='container'>
             <div className='row m-3' style={{ marginTop: '100px' }}>

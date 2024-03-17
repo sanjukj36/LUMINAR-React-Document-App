@@ -9,54 +9,49 @@ import { Box, Button, Card, CardActions, CardContent, Modal, TextField, Typograp
 
 
 function Editor() {
-    // const modules = {
-    //     toolbar: [
-    //       ['bold', 'italic', 'underline', 'strike'],
-    //     ],
-    //   };
-
     const { id } = useParams();
     const [documents, setDocuments] = useState([]);
-    const getDocuments = async () => {
-        const data = await DocumentDataService.getAllDocument();
-        setDocuments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
-    };
-
+    const [content, setContent] = useState('');
+    const { quill, quillRef } = useQuill();
 
     useEffect(() => {
-        console.log("gggkjgkjgkj", id);
-        getDocuments()
-
-        console.log("ssss", documents);
-
-    }, [id])
-
-
-    const { quill, quillRef } = useQuill();
-    const [content, setContent] = useState();
-
-    React.useEffect(() => {
-        if (quill) {
-            quill.on('text-change', () => {
-
-                console.log(quillRef.current.firstChild.innerHTML); // Get innerHTML using quillRef
-                setContent(quillRef.current.firstChild.innerHTML)
-            });
+        const getDocuments = async () => {
+            const data = await DocumentDataService.getAllDocument();
+            setDocuments(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
         };
-    }, [quill]);
-    console.log(content);
+        getDocuments();
+    }, [id]);
 
-    let navigate = useNavigate();
+    useEffect(() => {
+        const selectedDocument = documents.find((doc) => doc.id === id);
+        if (selectedDocument) {
+            setContent(selectedDocument.documentContent);
+        }
+    }, [documents, id]);
+
+    useEffect(() => {
+        if (quill) {
+            quill.root.innerHTML = content;
+            quill.on('text-change', (delta, oldDelta, source) => {
+                if (source === 'user') {
+                    setContent(quill.root.innerHTML);
+                }
+            });
+        }
+    }, [quill, content]);
+
+    const navigate = useNavigate();
+
     const handleUpdate = async () => {
         if (content) {
             const updatedDocument = {
                 documentContent: content
             };
             await DocumentDataService.updateDocument(id, updatedDocument);
-            navigate(`/`)
-        }else{
-            navigate(`/`)
-            alert("Nothing Updated")
+            navigate('/');
+        } else {
+            navigate('/');
+            alert('Nothing Updated');
         }
     };
 
@@ -70,6 +65,7 @@ function Editor() {
                             <div key={index} className='text-center mt-5'>
                                 
                                 <h4><u>{doc.documentName}</u></h4>
+
                                 {/* Render your editor component */}
                             </div>
                             
